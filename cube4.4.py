@@ -47,10 +47,6 @@ def change_initialpos(j):
         print 'All checked'
         return ([],Di,di,j)
 
-#Lcube, K: the inverse of L in the cube
-def Lcube(cube,L):
-    return cube - set(L)
-
 #change direction:
 #whenever a step fails, the direction gets changed or the snake steps back (shorten the list L)
 def change_direction(Li,Di,di,j):
@@ -88,9 +84,8 @@ def steps(Li,Di,di,j): # main procedure
     n=len(Li)
 
     p=sum_of(Li[-1], directions[di])
-    K = Lcube(cube,Li)
 
-    if p in K:# and (n<20 or (not dead_end(K,p) and connected(K,p))):
+    if p in cube and not p in Li:# and (n<20 or (not dead_end(K,p) and connected(K,p))):
 
         Li.append(p)
         Di.append(di)
