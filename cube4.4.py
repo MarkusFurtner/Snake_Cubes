@@ -79,12 +79,10 @@ def change_direction(Li, Di, di, j):
                 di = Di.pop()
                 # print 'pop2'
 
-            else:
-                (Li, Di, di, j) = change_direction(Li, Di, di, j)
-            return (Li, Di, di, j)
-        else:
-            di = (di + 1) % 6
-            return (Li, Di, di, j)
+            return change_direction(Li, Di, di, j)
+
+        di = (di + 1) % 6
+        return (Li, Di, di, j)
     else:
         return change_initialpos(j)
 
