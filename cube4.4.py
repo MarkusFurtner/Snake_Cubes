@@ -32,9 +32,7 @@ def sum_of(a,b):
 
 #change_initialpos:
 #when all possibilities of one initialposition are checked, jump to next one
-def change_initialpos(j,Di,di):
-    # Why does this function take Di and di as arguments when it
-    # doesn't use the values?
+def change_initialpos(j):
     di=0
     Di=[0]
     run_time = time.clock() - start
@@ -51,11 +49,7 @@ def change_initialpos(j,Di,di):
 
 #Lcube, K: the inverse of L in the cube
 def Lcube(cube,L):
-    SL=set()
-    for l in L:
-        SL.add(l)
-    K=cube-SL
-    return K
+    return cube - set(L)
 
 #change direction:
 #whenever a step fails, the direction gets changed or the snake steps back (shorten the list L)
@@ -70,7 +64,7 @@ def change_direction(Li,Di,di,j):
             #print 'pop'
 
             if Di==[]:
-                return change_initialpos(j,Di,di)
+                return change_initialpos(j)
 
             while len(Li) not in J:
                 Li.pop()
@@ -86,7 +80,7 @@ def change_direction(Li,Di,di,j):
             di = (di +1)%6
             return (Li,Di,di,j)
     else:
-        return change_initialpos(j,Di,di)
+        return change_initialpos(j)
 
 
 #steps: either adds one position to the List L (the snake), or removes one, combined with
@@ -111,7 +105,7 @@ def steps(Li,Di,di,j): # main procedure
             while len(Li) not in J:
                 Li.pop()
                 if Li==[]:
-                    return change_initialpos(j,Di,di)
+                    return change_initialpos(j)
                 else:
                     Di.pop()
 
