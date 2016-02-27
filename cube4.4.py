@@ -10,25 +10,17 @@ directions = [(1, 0, 0), (0, 1, 0), (0, 0, 1),
               (-1, 0, 0), (0, -1, 0), (0, 0, -1)]
 # possible starting points (without symmetries) on a 4-cube)
 initialpos = [(1, 0, 0), (0, 0, 0), (1, 1, 0), (1, 1, 1)]
-L = [initialpos[0]]  # List of positions
-n = 0  # length of iterated snake
-d = 0  # number of direction
-D = [0]  # list of directions
-j = 0  # number of selected initialposition
-
 
 def in_cube(n):  # to form the cube
-    cube = set()
+    c = set()
     for i in range(0, n):
         for j in range(0, n):
             for k in range(0, n):
-                cube.add((i, j, k))
-    return cube
+                c.add((i, j, k))
+    return c
 
 cube = in_cube(CUBE_SIZE)
 # print cube, len(cube), J
-s = 0  # number of solutions
-i = 0  # number of steps
 start = time.clock()
 
 # sum_of: sums two list component wise
@@ -44,8 +36,7 @@ def sum_of(a, b):
 def change_initialpos(j):
     di = 0
     Di = [0]
-    run_time = time.clock() - start
-    print run_time
+    print time.clock() - start
     print 'New Position'
     if j < 3:
         j += 1
@@ -64,8 +55,8 @@ def change_initialpos(j):
 def change_direction(Li, Di, di, j):
     # print 'change'
 
-    # Should this really be D, and not Di?
-    if D != []:
+    # I'm assuming this should be Di, not D
+    if Di != []:
         while (di + 1) % 6 == Di[-1]:
             Li.pop()
             di = Di.pop()
@@ -116,27 +107,40 @@ def steps(Li, Di, di, j):  # main procedure
 
             (Li, Di, di, j) = change_direction(Li, Di, di, j)
     return (Li, Di, di, j)
-# main loop
-while n in range(0, CUBE_SIZE**3 + 1):
-    (L, D, d, j) = steps(L, D, d, j)
-    n = len(L)
-    i += 1
-    if i % 100000 == 0:
-        print(i)
-        run_time = time.clock() - start
-        print run_time, run_time * 1000 / i
-        print (L, len(L), D, i, j)
-    if len(L) == CUBE_SIZE**3:
-        s += 1
-        print ('Solution!')
-        print s
-        print (L, len(L), D, i, j)
-        run_time = time.clock() - start
-        print run_time, run_time * 1000 / i
 
-    if j > 3:
-        print 'All possibilities checked, solutions found:'
-        print s
-        run_time = time.clock() - start
-        print run_time
-        break
+
+def main():
+    L = [initialpos[0]]  # List of positions
+    n = 0  # length of iterated snake
+    d = 0  # number of direction
+    D = [0]  # list of directions
+    j = 0  # number of selected initialposition
+    s = 0  # number of solutions
+    i = 0  # number of steps
+
+    while n in range(0, CUBE_SIZE**3 + 1):
+        (L, D, d, j) = steps(L, D, d, j)
+        n = len(L)
+        i += 1
+        if i % 100000 == 0:
+            print(i)
+            run_time = time.clock() - start
+            print run_time, run_time * 1000 / i
+            print (L, len(L), D, i, j)
+        if len(L) == CUBE_SIZE**3:
+            s += 1
+            print ('Solution!')
+            print s
+            print (L, len(L), D, i, j)
+            run_time = time.clock() - start
+            print run_time, run_time * 1000 / i
+
+        if j > 3:
+            print 'All possibilities checked, solutions found:'
+            print s
+            run_time = time.clock() - start
+            print run_time
+            break
+
+if __name__ == "__main__":
+    main()
