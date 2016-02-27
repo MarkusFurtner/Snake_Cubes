@@ -30,25 +30,16 @@ cube= in_cube(CUBE_SIZE)
 s=0 #number of solutions
 i=0 # number of steps
 start = time.clock()
-#main procedures:
-#steps: either adds one position to the List L (the snake), or removes one, combined with
-#change direction:
-#whenever a step fails, the direction gets changed or the snake steps back (shorten the list L)
-#change_initialpos:
-#when all possibilities of one initialposition are checked, jump to next one
-#other help procedures:
-# sum_of: sums two list component wise
-#Lcube, K: the inverse of L in the cube
-#connected: checks if K is connected, if that is not the case, this path will be abandoned
-#dead_end: If K has 3 or more dead ends, the path will be abandoned
-#pappend: a help procedure to check connectedness
 
+# sum_of: sums two list component wise
 def sum_of(a,b):
     return (a[0]+b[0],a[1]+b[1],a[2]+b[2])
 
-# Why does this function take Di and di as arguments when it doesn't
-# use the values?
+#change_initialpos:
+#when all possibilities of one initialposition are checked, jump to next one
 def change_initialpos(j,Di,di):
+    # Why does this function take Di and di as arguments when it
+    # doesn't use the values?
     di=0
     Di=[0]
     run_time = time.clock() - start
@@ -63,6 +54,7 @@ def change_initialpos(j,Di,di):
         print 'All checked'
         return ([],Di,di,j)
 
+#Lcube, K: the inverse of L in the cube
 def Lcube(cube,L):
     SL=set()
     for l in L:
@@ -70,6 +62,7 @@ def Lcube(cube,L):
     K=cube-SL
     return K
 
+#pappend: a help procedure to check connectedness
 def pappend(K,P):
     # This iterates over P while changing it.  In this case it seems
     # that this works in Python, and it actually works in your favor,
@@ -86,7 +79,7 @@ def pappend(K,P):
                 P.append(p)
     return P
 
-#print pappend(cube,(0,0,0))
+#connected: checks if K is connected, if that is not the case, this path will be abandoned
 def connected(K,p):
     if p in K:
         P=[p]
@@ -104,6 +97,7 @@ def connected(K,p):
     else:
         return False
 
+#dead_end: If K has 3 or more dead ends, the path will be abandoned
 def dead_end(K,p):
     a=0
     for k in K:
@@ -120,6 +114,8 @@ def dead_end(K,p):
                     return True
     return False
 
+#change direction:
+#whenever a step fails, the direction gets changed or the snake steps back (shorten the list L)
 def change_direction(Li,Di,di,j):
     #print 'change'
 
@@ -150,6 +146,7 @@ def change_direction(Li,Di,di,j):
         return change_initialpos(j,Di,di)
 
 
+#steps: either adds one position to the List L (the snake), or removes one, combined with
 def steps(Li,Di,di,j): # main procedure
     n=len(Li)
 
