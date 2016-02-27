@@ -65,7 +65,7 @@ def Lcube(cube,L):
     SL=set()
     for l in L:
         SL.add(l)
-    K=set(cube)-set(SL)
+    K=cube-SL
     return K
 
 def pappend(K,P):
@@ -81,15 +81,7 @@ def connected(K,p):
         P=[p]
         while P != pappend(K,P):
             P=pappend(K,P)
-            #print P
-        SP=set()
-        for p in P:
-            SP.add(p)
-        if K==SP:
-            return True
-        else:
-            return False
-       
+        return K == set(P)
     else:
         return False
 
