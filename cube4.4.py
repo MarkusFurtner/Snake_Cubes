@@ -1,10 +1,5 @@
 import time #this is a Python library
 
-def time_execution(code):
-   start = time.clock()  # start the clock
-   result = eval(code)  # evaluate any string as if it is a Python command
-   run_time = time.clock() - start  # find difference in start and end time
-   return result, run_time  # return the result of the code and time taken
 CUBE_SIZE=4   #length of edge of cube
 J3={1,3,5,7,9,10,11,12,14,16,17,18,20,21,23,24,25}
 J4={1,4,5,8,9,10,11,12,14,15,16,17,18,19,21,22,25,26,28,30,33,34,36,37,38,39,40,41,42,43,44,45,48,49,52,53,56,59,62}
@@ -61,58 +56,6 @@ def Lcube(cube,L):
         SL.add(l)
     K=cube-SL
     return K
-
-#pappend: a help procedure to check connectedness
-def pappend(K,P):
-    # This iterates over P while changing it.  In this case it seems
-    # that this works in Python, and it actually works in your favor,
-    # but I'm not sure you're actually aware of what's exactly going
-    # on.
-    #
-    # Also, why is P a list?  Aren't we supposed to convert to sets?
-    # Of course the iteration probably won't work anymore like this
-    # with sets.
-    for p in P:
-        for e in directions:
-            p= sum_of(p,e)
-            if p in K and p not in P:
-                P.append(p)
-    return P
-
-#connected: checks if K is connected, if that is not the case, this path will be abandoned
-def connected(K,p):
-    if p in K:
-        P=[p]
-        # You're evaluating pappend twice here, with the same
-        # arguments, and what's worse is that pappend is not pure: it
-        # modifies P, and then also returns it.  Which also means that
-        # the condition in this while will never be true.  The reason
-        # your code still works is that, as I mentioned above, you're
-        # appending to P while iterating over it, and the iteration
-        # continues over the items that you've appended.  But it's
-        # very difficult to understand and obscure.
-        while P != pappend(K,P):
-            P=pappend(K,P)
-        return K == set(P)
-    else:
-        return False
-
-#dead_end: If K has 3 or more dead ends, the path will be abandoned
-def dead_end(K,p):
-    a=0
-    for k in K:
-        if k!=p:
-            E=[k]
-
-            for e in directions:
-                x=sum_of(k,e)
-                if x in K:
-                    E.append(x)
-            if len(E)<3:
-                a+=1
-                if a>1:
-                    return True
-    return False
 
 #change direction:
 #whenever a step fails, the direction gets changed or the snake steps back (shorten the list L)
