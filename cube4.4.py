@@ -46,6 +46,8 @@ start = time.clock()
 def sum_of(a,b):
     return (a[0]+b[0],a[1]+b[1],a[2]+b[2])
 
+# Why does this function take Di and di as arguments when it doesn't
+# use the values?
 def change_initialpos(j,Di,di):
     di=0
     Di=[0]
@@ -69,16 +71,33 @@ def Lcube(cube,L):
     return K
 
 def pappend(K,P):
+    # This iterates over P while changing it.  In this case it seems
+    # that this works in Python, and it actually works in your favor,
+    # but I'm not sure you're actually aware of what's exactly going
+    # on.
+    #
+    # Also, why is P a list?  Aren't we supposed to convert to sets?
+    # Of course the iteration probably won't work anymore like this
+    # with sets.
     for p in P:
         for e in directions:
             p= sum_of(p,e)
             if p in K and p not in P:
                 P.append(p)
     return P
+
 #print pappend(cube,(0,0,0))
 def connected(K,p):
     if p in K:
         P=[p]
+        # You're evaluating pappend twice here, with the same
+        # arguments, and what's worse is that pappend is not pure: it
+        # modifies P, and then also returns it.  Which also means that
+        # the condition in this while will never be true.  The reason
+        # your code still works is that, as I mentioned above, you're
+        # appending to P while iterating over it, and the iteration
+        # continues over the items that you've appended.  But it's
+        # very difficult to understand and obscure.
         while P != pappend(K,P):
             P=pappend(K,P)
         return K == set(P)
@@ -104,6 +123,7 @@ def dead_end(K,p):
 def change_direction(Li,Di,di,j):
     #print 'change'
 
+    # Should this really be D, and not Di?
     if D !=[]:
         while (di+1)%6 == Di[-1]:
             Li.pop()
@@ -122,6 +142,8 @@ def change_direction(Li,Di,di,j):
                 (Li,Di,di,j)= change_direction(Li,Di,di,j)
             return (Li,Di,di,j)
         else:
+            # You have random whitespace in your code.  Why is there a
+            # space before the + here?
             di = (di +1)%6
             return (Li,Di,di,j)
     else:
