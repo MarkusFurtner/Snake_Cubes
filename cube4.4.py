@@ -4,8 +4,15 @@ CUBE_SIZE = 4  # length of edge of cube
 J3 = {1, 3, 5, 7, 9, 10, 11, 12, 14, 16, 17, 18, 20, 21, 23, 24, 25}
 J4 = {1, 4, 5, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 25, 26, 28, 30,
       33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48, 49, 52, 53, 56, 59, 62}
+
 # the set of joints of the snake
-J = J4
+if CUBE_SIZE == 3:
+    J = J3
+elif CUBE_SIZE == 4:
+    J = J4
+else:
+    raise(Exception("Error: Cube size not supported"))
+
 directions = [(1, 0, 0), (0, 1, 0), (0, 0, 1),
               (-1, 0, 0), (0, -1, 0), (0, 0, -1)]
 # possible starting points (without symmetries) on a 4-cube)
