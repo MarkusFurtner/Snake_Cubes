@@ -46,7 +46,7 @@ start = time.clock()
 def sum_of(a,b):
     return (a[0]+b[0],a[1]+b[1],a[2]+b[2])
 
-def change_initialpos(j):
+def change_initialpos(j,Di,di):
     di=0
     Di=[0]
     run_time = time.clock() - start
@@ -120,7 +120,7 @@ def change_direction(Li,Di,di,j):
             #print 'pop'
             
             if Di==[]:
-                return change_initialpos(j)
+                return change_initialpos(j,Di,di)
                 
             while len(Li) not in J:    
                 Li.pop()
@@ -134,7 +134,7 @@ def change_direction(Li,Di,di,j):
             di = (di +1)%6
             return (Li,Di,di,j)
     else:
-        return change_initialpos(j)
+        return change_initialpos(j,Di,di)
         
          
 def steps(Li,Di,di,j): # main procedure       
@@ -143,7 +143,7 @@ def steps(Li,Di,di,j): # main procedure
     p=sum_of(Li[-1], directions[di])    
     K = Lcube(cube,Li)
 
-    if p in K and (n<20 or (not dead_end(K,p) and connected(K,p))):
+    if p in K:# and (n<20 or (not dead_end(K,p) and connected(K,p))):
         
         Li.append(p)
         Di.append(di)
@@ -158,7 +158,7 @@ def steps(Li,Di,di,j): # main procedure
             while len(Li) not in J:
                 Li.pop()
                 if Li==[]:
-                    return change_initialpos(j)
+                    return change_initialpos(j,Di,di)
                 else:
                     Di.pop()
                     
