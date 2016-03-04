@@ -33,8 +33,8 @@ start = time.clock()
 # sum_of: sums two list component wise
 
 
-def sum_of(a, b):
-    return (a[0] + b[0], a[1] + b[1], a[2] + b[2])
+def sum_of((ax, ay, az), (bx, by, bz)):
+    return (ax+bx, ay+by, az+bz)
 
 # change_initialpos:
 # when all possibilities of one initialposition are checked, jump to next one
