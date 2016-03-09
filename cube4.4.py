@@ -32,7 +32,7 @@ start = time.clock()
 
 # sum_of: sums two list component wise
 
-
+print 'next' 
 def sum_of((ax, ay, az), (bx, by, bz)):
     return (ax+bx, ay+by, az+bz)
 
