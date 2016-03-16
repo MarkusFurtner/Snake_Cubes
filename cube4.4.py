@@ -18,6 +18,7 @@ directions = [(1, 0, 0), (0, 1, 0), (0, 0, 1),
 # possible starting points (without symmetries) on a 4-cube)
 initialpos = [(1, 0, 0), (0, 0, 0), (1, 1, 0), (1, 1, 1)]
 
+
 def in_cube(n):  # to form the cube
     c = set()
     for i in range(0, n):
@@ -53,6 +54,48 @@ def change_initialpos(j):
         j += 1
         print 'All checked'
         return ([], Di, di, j)
+
+
+# pappend: a help procedure to check connectedness
+def transitive(K, initial):
+    P = set(initial)
+    worklist = [initial]
+    for p in worklist:
+        for e in directions:
+            q = sum_of(p, e)
+            if q in K and q not in P:
+                P.add(q)
+                worklist.append(q)
+    return P
+
+# connected: checks if K is connected, if that is not the case, this path
+# will be abandoned
+
+
+def connected(K, p):
+    if p in K:
+        return K == transitive(K, p)
+    else:
+        return False
+
+# dead_end: If K has 3 or more dead ends, the path will be abandoned
+
+
+def dead_end(K, p):
+    a = 0
+    for k in K:
+        if k != p:
+            num_empty_neighbors = 0
+            for e in directions:
+                x = sum_of(k, e)
+                if x in K:
+                    num_empty_neighbors += 1
+            if num_empty_neighbors < 2:
+                a += 1
+                if a > 1:
+                    return True
+    return False
+
 
 # change direction:
 # whenever a step fails, the direction gets changed or the snake steps
@@ -92,8 +135,9 @@ def steps(Li, Di, di, j):  # main procedure
 
     p = sum_of(Li[-1], directions[di])
 
-    # and (n<20 or (not dead_end(K,p) and connected(K,p))):
-    if p in cube and not p in Li:
+    # if p in cube and not p in Li:
+    K = cube - set(Li)
+    if p in K and (n < 20 or (not dead_end(K, p) and connected(K, p))):
 
         Li.append(p)
         Di.append(di)
