@@ -29,7 +29,6 @@ elif CUBE_SIZE == 5:
     J_list = J5
 else:
     raise(Exception("Error: Cube size not supported"))
-J = set(J_list)
 
 directions = [(1, 0, 0), (0, 1, 0), (0, 0, 1),
               (-1, 0, 0), (0, -1, 0), (0, 0, -1)]
@@ -78,49 +77,6 @@ print free_neighbors(cube,(1,0,0))
 def update_referencelist(knots,K,p):
     knots[p[0]][p[1]][p[2]]=free_neighbors(K,p)
     return knots
-
-
-# pappend: a help procedure to check connectedness
-def transitive(K, initial):
-    P = set([initial])
-    worklist = [initial]
-    for p in worklist:
-        for e in directions:
-            q = sum_of(p, e)
-            if q in K and q not in P:
-                P.add(q)
-                worklist.append(q)
-    return P
-
-# connected: checks if K is connected, if that is not the case, this path
-# will be abandoned
-
-
-def connected(K, p):
-    if p in K:
-        return K == transitive(K, p)
-    else:
-        return False
-#print transitive (cube-set([(0,0,0),(1,0,0)]),(2,0,0))       
-#print connected(cube-set([(1, 0, 0), (1, 1, 0), (1, 2, 0), (1, 2, 1), (1, 2, 2), (1, 1, 2), (1, 0, 2)]),(2,2,0))
-# dead_end: If K has 3 or more dead ends, the path will be abandoned
-
-
-def dead_end(K, p):
-    a = 0
-    for k in K:
-        if k != p:
-            num_empty_neighbors = 0
-            for e in directions:
-                x = sum_of(k, e)
-                if x in K:
-                    num_empty_neighbors += 1
-            if num_empty_neighbors < 2:
-                a += 1
-                if a > 1:
-                    return True
-    return False
-
 
 num_steps = 0
 def count_step():
