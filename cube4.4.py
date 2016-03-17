@@ -1,4 +1,4 @@
-import time  # this is a Python library
+import time
 
 CUBE_SIZE = 4  # length of edge of cube
 J2 = [1,2,3,4,5,6,7,8]
@@ -136,6 +136,10 @@ def compute_successor_directions(d):
 
 successor_directions = [compute_successor_directions(d) for d in range(len(directions))]
 
+# K: the set of free positions
+# Li: the list of positions occupied by the snake
+# Di: the list of directions taken by the snake
+# j: the index into J_list to which to advance in the next step
 def recurse(K, Li, Di, j):
     count_step()
 
