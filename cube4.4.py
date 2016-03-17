@@ -1,15 +1,32 @@
-import time  # this is a Python library
+import time
 
 CUBE_SIZE = 4  # length of edge of cube
-J3 = {1, 3, 5, 7, 9, 10, 11, 12, 14, 16, 17, 18, 20, 21, 23, 24, 25}
-J4 = {1, 4, 5, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 25, 26, 28, 30,
-      33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48, 49, 52, 53, 56, 59, 62}
-
+J2 = [1,2,3,4,5,6,7,8]
+J3b= [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
+J3 = [1, 3, 5, 7, 9, 10, 11, 12, 14, 16, 17, 18, 20, 21, 23, 24, 25, 27]
+J4 = [1, 4, 5, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 25, 26, 28, 30,
+      33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48, 49, 52, 53, 56, 59, 62,64]
+J5 = [1, 4, 5, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22, 25, 26, 28, 30,
+      33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48, 49, 52, 53, 56, 59, 62, 64,
+      65, 67,68,71,72,73,77,78,82,83,87,88,92,93,97,101,102,105,106,109,110,113,114,117,118,121,122,125]
+knots3 = [[[3,4,3],[4,5,4],[3,4,3]],
+          [[4,5,4],[5,6,5],[4,5,4]],
+          [[3,4,3],[4,5,4],[3,4,3]]]
+knots4 = [[[3,4,4,3],[4,5,5,4],[4,5,5,4],[3,4,4,3]],
+          [[4,5,5,4],[5,6,6,5],[5,6,6,5],[4,5,5,4]],
+          [[4,5,5,4],[5,6,6,5],[5,6,6,5],[4,5,5,4]],
+          [[3,4,4,3],[4,5,5,4],[4,5,5,4],[3,4,4,3]]]         
 # the set of joints of the snake
 if CUBE_SIZE == 3:
-    J = J3
+    J_list = J3
+    knots=knots3
 elif CUBE_SIZE == 4:
-    J = J4
+    J_list = J4
+    knots=knots4
+elif CUBE_SIZE == 2:
+    J_list = J2
+elif CUBE_SIZE == 5:
+    J_list = J5
 else:
     raise(Exception("Error: Cube size not supported"))
 
@@ -17,6 +34,7 @@ directions = [(1, 0, 0), (0, 1, 0), (0, 0, 1),
               (-1, 0, 0), (0, -1, 0), (0, 0, -1)]
 # possible starting points (without symmetries) on a 4-cube)
 initialpos = [(1, 0, 0), (0, 0, 0), (1, 1, 0), (1, 1, 1)]
+
 
 def in_cube(n):  # to form the cube
     c = set()
@@ -27,127 +45,101 @@ def in_cube(n):  # to form the cube
     return c
 
 cube = in_cube(CUBE_SIZE)
-# print cube, len(cube), J
+
 start = time.clock()
 
 # sum_of: sums two list component wise
-
-
 def sum_of((ax, ay, az), (bx, by, bz)):
-    return (ax+bx, ay+by, az+bz)
+    return (ax+bx, ay+by, az+bz) 
 
-# change_initialpos:
-# when all possibilities of one initialposition are checked, jump to next one
+def free_neighbors(K,p):
+    i=0
+    for e in directions:
+        if sum_of(p,e) in K:
+            i +=1
+    return i
+def position_of(L,p):
+    for n in range(0,len(L)):
+        if L[n]==p:
+            return n
+            
+def referencelist(K,L):
+    for p in K:
+        knots[p[0]][p[1]][p[2]]=free_neighbors(K,p)
+    for p in L:
+        knots[p[0]][p[1]][p[2]]= -1 - position_of(L,p)
+    return knots    
 
+print referencelist(cube,[])
+print free_neighbors(cube,(1,0,0)) 
 
-def change_initialpos(j):
-    di = 0
-    Di = [0]
-    print time.clock() - start
-    print 'New Position'
-    if j < 3:
-        j += 1
-        L = [initialpos[j]]
-        return (L, Di, di, j)
+def update_referencelist(knots,K,p):
+    knots[p[0]][p[1]][p[2]]=free_neighbors(K,p)
+    return knots
+
+num_steps = 0
+def count_step():
+    global num_steps
+    num_steps += 1
+    if num_steps % 1000000 == 0:
+        print(num_steps)
+        run_time = time.clock() - start
+        print run_time, run_time * 1000 / num_steps
+
+def compute_successor_directions(d):
+    return [n for n in range(len(directions)) if n != d]
+
+successor_directions = [compute_successor_directions(d) for d in range(len(directions))]
+
+# K: the set of free positions
+# Li: the list of positions occupied by the snake
+# Di: the list of directions taken by the snake
+# j: the index into J_list to which to advance in the next step
+def recurse(K, Li, Di, j):
+    count_step()
+
+    length_so_far = len(Li)
+    # if the cube is full, we're done
+    if length_so_far == CUBE_SIZE**3:
+        print("solution!")
+        print(Li, Di, j)
+        return
+
+    # which directions do we try next?
+    if length_so_far == 1:
+        # if we're at the initial position, we try all directions
+        next_directions = range(len(directions))
     else:
-        j += 1
-        print 'All checked'
-        return ([], Di, di, j)
+        # otherwise the directions allowed to come after the last one 
+        next_directions = successor_directions[Di[-1]]
 
-# change direction:
-# whenever a step fails, the direction gets changed or the snake steps
-# back (shorten the list L)
+    # how many snake elements in this step?
+    num_elements = J_list[j] - J_list[j-1]
 
-
-def change_direction(Li, Di, di, j):
-    # print 'change'
-
-    # I'm assuming this should be Di, not D
-    if Di != []:
-        while (di + 1) % 6 == Di[-1]:
-            Li.pop()
-            di = Di.pop()
-            # print 'pop'
-
-            if Di == []:
-                return change_initialpos(j)
-
-            while len(Li) not in J:
-                Li.pop()
-                di = Di.pop()
-                # print 'pop2'
-
-            return change_direction(Li, Di, di, j)
-
-        di = (di + 1) % 6
-        return (Li, Di, di, j)
-    else:
-        return change_initialpos(j)
-
-
-# steps: either adds one position to the List L (the snake), or removes
-# one, combined with
-def steps(Li, Di, di, j):  # main procedure
-    n = len(Li)
-
-    p = sum_of(Li[-1], directions[di])
-
-    # and (n<20 or (not dead_end(K,p) and connected(K,p))):
-    if p in cube and not p in Li:
-
-        Li.append(p)
-        Di.append(di)
-
-        if (n + 1) in J:
-            di = (di + 1) % 6
-    else:
-        if n in J:
-            (Li, Di, di, j) = change_direction(Li, Di, di, j)
-        else:
-            #print (Li,Di,di,j)
-            while len(Li) not in J:
-                Li.pop()
-                if Li == []:
-                    return change_initialpos(j)
-                else:
-                    Di.pop()
-
-            (Li, Di, di, j) = change_direction(Li, Di, di, j)
-    return (Li, Di, di, j)
-
+    for d in next_directions:
+        n = 0
+        for i in range(num_elements):
+            p = sum_of(Li[-1], directions[d])
+            # FIXME: also check dead_end
+            if p not in K:
+                # position already occupied - undo
+                break
+            # occupy the position
+            Li.append(p)
+            K.remove(p)
+            Di.append(d)
+            n += 1
+        if n == num_elements:
+            # we got all the way through our elements, so recurse
+            recurse(K, Li, Di, j+1)
+        # undo the positions we occupied
+        for i in range(n):
+            K.add(Li.pop())
+            Di.pop()
 
 def main():
-    L = [initialpos[0]]  # List of positions
-    n = 0  # length of iterated snake
-    d = 0  # number of direction
-    D = [0]  # list of directions
-    j = 0  # number of selected initialposition
-    s = 0  # number of solutions
-    i = 0  # number of steps
-
-    while n in range(0, CUBE_SIZE**3 + 1):
-        (L, D, d, j) = steps(L, D, d, j)
-        n = len(L)
-        i += 1
-        if i % 100000 == 0:
-            print(i)
-            run_time = time.clock() - start
-            print run_time, run_time * 1000 / i
-            print (L, len(L), D, i, j)
-        if len(L) == CUBE_SIZE**3:
-            s += 1
-            print ('Solution!')
-            print s
-            print (L, len(L), D, i, j)
-            run_time = time.clock() - start
-            print run_time, run_time * 1000 / i
-
-        if j > 3:
-            print 'All possibilities checked, solutions found:'
-            print s
-            run_time = time.clock() - start
-            print run_time
-            break
+    for p in initialpos:
+        recurse(set(cube), [p], [], 1)
 
 if __name__ == "__main__":
     main()
