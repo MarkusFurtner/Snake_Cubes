@@ -132,7 +132,7 @@ def count_step():
         print run_time, run_time * 1000 / num_steps
 
 def successor_directions(d):
-    return [n for n in directions if n != d]
+    return [n for n in range(len(directions)) if n != d]
 
 def recurse(Li, Di, j):
     count_step()
@@ -150,7 +150,7 @@ def recurse(Li, Di, j):
     # which directions do we try next?
     if length_so_far == 1:
         # if we're at the initial position, we try all directions
-        next_directions = directions
+        next_directions = range(len(directions))
     else:
         # otherwise the directions allowed to come after the last one 
         next_directions = successor_directions(Di[-1])
@@ -161,7 +161,7 @@ def recurse(Li, Di, j):
     for d in next_directions:
         n = 0
         for i in range(num_elements):
-            p = sum_of(Li[-1], d)
+            p = sum_of(Li[-1], directions[d])
             # FIXME: also check dead_end
             if p not in K:
                 # position already occupied - undo
