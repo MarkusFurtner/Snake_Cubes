@@ -136,7 +136,7 @@ def compute_successor_directions(d):
 
 successor_directions = [compute_successor_directions(d) for d in range(len(directions))]
 
-def recurse(Li, Di, j):
+def recurse(K, Li, Di, j):
     count_step()
 
     length_so_far = len(Li)
@@ -145,9 +145,6 @@ def recurse(Li, Di, j):
         print("solution!")
         print(Li, Di, j)
         return
-
-    # the free positions        
-    K = cube - set(Li)
 
     # which directions do we try next?
     if length_so_far == 1:
@@ -170,19 +167,20 @@ def recurse(Li, Di, j):
                 break
             # occupy the position
             Li.append(p)
+            K.remove(p)
             Di.append(d)
             n += 1
         if n == num_elements:
             # we got all the way through our elements, so recurse
-            recurse(Li, Di, j+1)
+            recurse(K, Li, Di, j+1)
         # undo the positions we occupied
         for i in range(n):
-            Li.pop()
+            K.add(Li.pop())
             Di.pop()
 
 def main():
     for p in initialpos:
-        recurse([p], [], 1)
+        recurse(set(cube), [p], [], 1)
 
 if __name__ == "__main__":
     main()
