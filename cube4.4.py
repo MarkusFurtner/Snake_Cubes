@@ -131,8 +131,10 @@ def count_step():
         run_time = time.clock() - start
         print run_time, run_time * 1000 / num_steps
 
-def successor_directions(d):
+def compute_successor_directions(d):
     return [n for n in range(len(directions)) if n != d]
+
+successor_directions = [compute_successor_directions(d) for d in range(len(directions))]
 
 def recurse(Li, Di, j):
     count_step()
@@ -153,7 +155,7 @@ def recurse(Li, Di, j):
         next_directions = range(len(directions))
     else:
         # otherwise the directions allowed to come after the last one 
-        next_directions = successor_directions(Di[-1])
+        next_directions = successor_directions[Di[-1]]
 
     # how many snake elements in this step?
     num_elements = J_list[j] - J_list[j-1]
