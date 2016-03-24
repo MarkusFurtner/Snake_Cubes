@@ -50,32 +50,7 @@ start = time.clock()
 
 # sum_of: sums two list component wise
 def sum_of((ax, ay, az), (bx, by, bz)):
-    return (ax+bx, ay+by, az+bz) 
-
-def free_neighbors(K,p):
-    i=0
-    for e in directions:
-        if sum_of(p,e) in K:
-            i +=1
-    return i
-def position_of(L,p):
-    for n in range(0,len(L)):
-        if L[n]==p:
-            return n
-            
-def referencelist(K,L):
-    for p in K:
-        knots[p[0]][p[1]][p[2]]=free_neighbors(K,p)
-    for p in L:
-        knots[p[0]][p[1]][p[2]]= -1 - position_of(L,p)
-    return knots    
-
-print referencelist(cube,[])
-print free_neighbors(cube,(1,0,0)) 
-
-def update_referencelist(knots,K,p):
-    knots[p[0]][p[1]][p[2]]=free_neighbors(K,p)
-    return knots
+    return (ax+bx, ay+by, az+bz)
 
 num_steps = 0
 def count_step():
