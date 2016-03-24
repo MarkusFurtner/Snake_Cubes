@@ -30,8 +30,8 @@ elif CUBE_SIZE == 5:
 else:
     raise(Exception("Error: Cube size not supported"))
 
-directions = [(1, 0, 0), (0, 1, 0), (0, 0, 1),
-              (-1, 0, 0), (0, -1, 0), (0, 0, -1)]
+directions = [(-1, 0, 0), (0, -1, 0), (0, 0, -1),
+              (1, 0, 0), (0, 1, 0), (0, 0, 1)]
 # possible starting points (without symmetries) on a 4-cube)
 initialpos = [(1, 0, 0), (0, 0, 0), (1, 1, 0), (1, 1, 1)]
 
