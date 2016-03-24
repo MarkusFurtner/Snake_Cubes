@@ -114,7 +114,7 @@ def recurse(K, Li, Di, j):
 
 def main():
     for p in initialpos:
-        recurse(set(cube), [p], [], 1)
+        recurse(set(cube) - set([p]), [p], [], 1)
 
 if __name__ == "__main__":
     main()
