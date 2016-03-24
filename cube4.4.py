@@ -66,6 +66,9 @@ def compute_successor_directions(d):
 
 successor_directions = [compute_successor_directions(d) for d in range(len(directions))]
 
+def invalid((x,y,z)):
+    return x < 0 or y < 0 or z < 0 or x >= CUBE_SIZE or y >= CUBE_SIZE or z >= CUBE_SIZE
+
 # K: the set of free positions
 # Li: the list of positions occupied by the snake
 # Di: the list of directions taken by the snake
@@ -96,12 +99,12 @@ def recurse(K, Li, Di, j):
         for i in range(num_elements):
             p = sum_of(Li[-1], directions[d])
             # FIXME: also check dead_end
-            if p not in K:
+            if invalid(p) or K[p[0]][p[1]][p[2]]:
                 # position already occupied - undo
                 break
             # occupy the position
             Li.append(p)
-            K.remove(p)
+            K[p[0]][p[1]][p[2]] = True
             Di.append(d)
             n += 1
         if n == num_elements:
@@ -109,12 +112,15 @@ def recurse(K, Li, Di, j):
             recurse(K, Li, Di, j+1)
         # undo the positions we occupied
         for i in range(n):
-            K.add(Li.pop())
+            p = Li.pop()
+            K[p[0]][p[1]][p[2]] = False
             Di.pop()
 
 def main():
     for p in initialpos:
-        recurse(set(cube) - set([p]), [p], [], 1)
+        K = [[[False for i in range(CUBE_SIZE)] for j in range(CUBE_SIZE)] for k in range(CUBE_SIZE)]
+        K[p[0]][p[1]][p[2]] = True
+        recurse(K, [p], [], 1)
 
 if __name__ == "__main__":
     main()
