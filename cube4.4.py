@@ -1,6 +1,7 @@
 import time
 
 CUBE_SIZE = 4  # length of edge of cube
+PADDED_SIZE = CUBE_SIZE + 2
 J2 = [1,2,3,4,5,6,7,8]
 J3b= [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]
 J3 = [1, 3, 5, 7, 9, 10, 11, 12, 14, 16, 17, 18, 20, 21, 23, 24, 25, 27]
@@ -30,21 +31,19 @@ elif CUBE_SIZE == 5:
 else:
     raise(Exception("Error: Cube size not supported"))
 
+def coords_to_index((x,y,z)):
+    return (x * PADDED_SIZE + y) * PADDED_SIZE + z
+
+def index_to_coords(i):
+    return ((i // (PADDED_SIZE**2)) % PADDED_SIZE, (i // PADDED_SIZE) % PADDED_SIZE, i % PADDED_SIZE)
+
 directions = [(-1, 0, 0), (0, -1, 0), (0, 0, -1),
               (1, 0, 0), (0, 1, 0), (0, 0, 1)]
+offset_directions = map(coords_to_index, directions)
+
 # possible starting points (without symmetries) on a 4-cube)
-initialpos = [(1, 0, 0), (0, 0, 0), (1, 1, 0), (1, 1, 1)]
+initialpos = map(coords_to_index, [(1, 1, 1), (2, 1, 1), (2, 2, 1), (2, 2, 2)])
 
-
-def in_cube(n):  # to form the cube
-    c = set()
-    for i in range(0, n):
-        for j in range(0, n):
-            for k in range(0, n):
-                c.add((i, j, k))
-    return c
-
-cube = in_cube(CUBE_SIZE)
 
 start = time.clock()
 
@@ -66,8 +65,8 @@ def compute_successor_directions(d):
 
 successor_directions = [compute_successor_directions(d) for d in range(len(directions))]
 
-def invalid((x,y,z)):
-    return x < 0 or y < 0 or z < 0 or x >= CUBE_SIZE or y >= CUBE_SIZE or z >= CUBE_SIZE
+def coords_valid((x,y,z)):
+    return x >= 1 and x <= CUBE_SIZE and y >= 1 and y <= CUBE_SIZE and z >= 1 and z <= CUBE_SIZE
 
 # K: the set of free positions
 # Li: the list of positions occupied by the snake
@@ -80,7 +79,7 @@ def recurse(K, Li, Di, j):
     # if the cube is full, we're done
     if length_so_far == CUBE_SIZE**3:
         print("solution!")
-        print(Li, Di, j)
+        print(map(index_to_coords, Li), Di, j)
         return
 
     # which directions do we try next?
@@ -97,14 +96,14 @@ def recurse(K, Li, Di, j):
     for d in next_directions:
         n = 0
         for i in range(num_elements):
-            p = sum_of(Li[-1], directions[d])
+            p = Li[-1] + offset_directions[d]
             # FIXME: also check dead_end
-            if invalid(p) or K[p[0]][p[1]][p[2]]:
+            if K[p]:
                 # position already occupied - undo
                 break
             # occupy the position
             Li.append(p)
-            K[p[0]][p[1]][p[2]] = True
+            K[p] = True
             Di.append(d)
             n += 1
         if n == num_elements:
@@ -113,13 +112,13 @@ def recurse(K, Li, Di, j):
         # undo the positions we occupied
         for i in range(n):
             p = Li.pop()
-            K[p[0]][p[1]][p[2]] = False
+            K[p] = False
             Di.pop()
 
 def main():
     for p in initialpos:
-        K = [[[False for i in range(CUBE_SIZE)] for j in range(CUBE_SIZE)] for k in range(CUBE_SIZE)]
-        K[p[0]][p[1]][p[2]] = True
+        K = [not coords_valid(index_to_coords(i)) for i in range(PADDED_SIZE**3)]
+        K[p] = True
         recurse(K, [p], [], 1)
 
 if __name__ == "__main__":
